@@ -1,3 +1,0 @@
-region     = "us-east-1"
-access_key = "REPLACE_WITH_YOUR_AWS_ACCESS_KEY"
-secret_key = "REPLACE_WITH_YOUR_AWS_SECRET_KEY"
