@@ -10,3 +10,4 @@ variable "region" {
 variable "endpoint" {
     description = "SNS topic subscription endpoint"
 }
+
