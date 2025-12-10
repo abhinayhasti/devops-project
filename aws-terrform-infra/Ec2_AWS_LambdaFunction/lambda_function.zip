@@ -1,0 +1,51 @@
+import json
+import boto3
+from botocore.exceptions import ClientError
+
+def lambda_handler(event, context):
+    ec2_client = boto3.client('ec2')
+    ssm_client = boto3.client('ssm')
+
+    try:
+        # Fetch latest Amazon Linux 2023 AMI ID via SSM
+        parameter = ssm_client.get_parameter(
+            Name='/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64'
+        )
+        latest_ami = parameter['Parameter']['Value']
+
+        # Launch EC2 instance with the latest AL2023 AMI
+        response = ec2_client.run_instances(
+            ImageId=latest_ami,
+            InstanceType='t2.micro',
+            MinCount=1,
+            MaxCount=1
+        )
+
+        instance_id = response['Instances'][0]['InstanceId']
+
+        # Tag the instance
+        ec2_client.create_tags(
+            Resources=[instance_id],
+            Tags=[{'Key': 'Name', 'Value': 'Whiz_Lambda_Function'}]
+        )
+
+        print(f"EC2 Instance Created: {instance_id} — using AMI {latest_ami}")
+
+        return {
+            'statusCode': 200,
+            'body': json.dumps("success")
+        }
+
+    except ClientError as e:
+        print("ClientError:", e)
+        return {
+            'statusCode': 500,
+            'body': json.dumps("error")
+        }
+
+    except Exception as e:
+        print("Exception:", e)
+        return {
+            'statusCode': 500,
+            'body': json.dumps("error")
+        }
