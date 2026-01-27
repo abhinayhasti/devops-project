@@ -23,7 +23,7 @@ cidr_blocks = ["0.0.0.0/0"]
 
 resource "aws_instance" "web-server" {
 ami = "ami-0150ccaf51ab55a51"
-instance_type = "t2.micro"
+instance_type = "t2.large"
 key_name = "whizlabs-key"
 security_groups = ["${aws_security_group.web-server.name}"]
 user_data = <<-EOF
